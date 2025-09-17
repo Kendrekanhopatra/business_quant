@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screener Dropdown Plugin Demo</title>
+    
+    <!-- External Libraries -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css" rel="stylesheet" />
+    
+    <!-- Plugin CSS -->
+    <link href="assets/css/screener-dropdown.css" rel="stylesheet" />
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .demo-note {
+            background: #e3f2fd;
+            border: 1px solid #2196f3;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .alert {
+            padding: 12px 20px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-danger {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+        }
+        
+        .alert-info {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        
+        .close {
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1;
+            color: #000;
+            text-shadow: 0 1px 0 #fff;
+            opacity: 0.5;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .close:hover {
+            opacity: 0.75;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-header">
+        <h1>Screener Dropdown Plugin Demo</h1>
+        <p>This is a demonstration of the WordPress plugin functionality</p>
+    </div>
+    
+    <div class="demo-note">
+        <h3>Demo Mode</h3>
+        <p>This is a static demo showing the plugin interface. In a real WordPress environment, the filters would connect to a database with actual stock data.</p>
+        <p><strong>Features demonstrated:</strong></p>
+        <ul>
+            <li>Dynamic filter addition and removal</li>
+            <li>Select2 dropdown integration</li>
+            <li>DataTables integration</li>
+            <li>Responsive design</li>
+            <li>Professional styling</li>
+        </ul>
+    </div>
+
+    <div id="screener-dropdown-container" class="screener-dropdown-wrapper">
+        <div class="screener-header">
+            <h3>Stock Screener</h3>
+            <p>Filter stocks based on financial metrics and criteria</p>
+        </div>
+        
+        <div class="screener-filters">
+            <div class="filters-header">
+                <h4>Filters</h4>
+                <button id="add-filter-btn" class="btn btn-primary">+ Add Filter</button>
+            </div>
+            
+            <div id="filters-container">
+                <!-- Filters will be added dynamically here -->
+            </div>
+            
+            <div class="filter-actions">
+                <button id="apply-filters-btn" class="btn btn-success">Apply Filters</button>
+                <button id="clear-filters-btn" class="btn btn-secondary">Clear All</button>
+            </div>
+        </div>
+        
+        <div class="screener-results">
+            <div class="results-header">
+                <h4>Results</h4>
+                <div class="results-info">
+                    <span id="results-count">0 companies found</span>
+                    <button id="export-btn" class="btn btn-outline">Export CSV</button>
+                </div>
+            </div>
+            
+            <div class="table-container">
+                <table id="screener-results-table" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Company Name</th>
+                            <th>Industry</th>
+                            <th>Sector</th>
+                            <th>Market Cap</th>
+                            <th>P/E Ratio</th>
+                            <th>Revenue (TTM)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Sample data for demo -->
+                        <tr>
+                            <td>AAPL</td>
+                            <td>Apple Inc.</td>
+                            <td>Technology</td>
+                            <td>Consumer Electronics</td>
+                            <td>2.8T</td>
+                            <td>28.5</td>
+                            <td>394.3B</td>
+                            <td><button class="btn btn-sm btn-info">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>MSFT</td>
+                            <td>Microsoft Corporation</td>
+                            <td>Technology</td>
+                            <td>Software</td>
+                            <td>2.4T</td>
+                            <td>32.1</td>
+                            <td>211.9B</td>
+                            <td><button class="btn btn-sm btn-info">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>GOOGL</td>
+                            <td>Alphabet Inc.</td>
+                            <td>Technology</td>
+                            <td>Internet Services</td>
+                            <td>1.7T</td>
+                            <td>25.8</td>
+                            <td>307.4B</td>
+                            <td><button class="btn btn-sm btn-info">View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Template (Hidden) -->
+    <div id="filter-template" style="display: none;">
+        <div class="filter-row">
+            <div class="filter-controls">
+                <div class="filter-field">
+                    <label>Metric:</label>
+                    <select class="metric-select" style="width: 250px;">
+                        <option value="">Select a metric...</option>
+
+                        <!-- Sample of key metrics from screener_list.csv -->
+                        <optgroup label="📊 Valuation Multiples">
+                            <option value="Book Value per Share" data-type="int">Book Value per Share</option>
+                            <option value="EV to Assets" data-type="int">EV to Assets</option>
+                            <option value="EV to Cash from Ops." data-type="int">EV to Cash from Ops.</option>
+                            <option value="EV to Debt" data-type="int">EV to Debt</option>
+                            <option value="EV to EBIT" data-type="int">EV to EBIT</option>
+                            <option value="EV to EBITDA" data-type="int">EV to EBITDA</option>
+                            <option value="EV to Free Cash Flow [EV/FCF]" data-type="int">EV to Free Cash Flow [EV/FCF]</option>
+                            <option value="EV to Market Cap" data-type="int">EV to Market Cap</option>
+                            <option value="EV to Revenue" data-type="int">EV to Revenue</option>
+                            <option value="Price to Book Value [P/B]" data-type="int">Price to Book Value [P/B]</option>
+                            <option value="Price to Earnings [P/E]" data-type="int">Price to Earnings [P/E]</option>
+                            <option value="Price to Free Cash Flow [P/FCF]" data-type="int">Price to Free Cash Flow [P/FCF]</option>
+                            <option value="Price to Sales [P/S]" data-type="int">Price to Sales [P/S]</option>
+                        </optgroup>
+
+                        <optgroup label="💰 Profitability & Other Metrics">
+                            <option value="Debt Ratio (Annual)" data-type="int">Debt Ratio (Annual)</option>
+                            <option value="Debt to Equity Ratio (Annual)" data-type="int">Debt to Equity Ratio (Annual)</option>
+                            <option value="Dividend Coverage Ratio (Annual)" data-type="int">Dividend Coverage Ratio (Annual)</option>
+                            <option value="Dividend Payout Ratio % (Annual)" data-type="%">Dividend Payout Ratio % (Annual)</option>
+                            <option value="Dividend Yield %" data-type="%">Dividend Yield %</option>
+                            <option value="Dividend per Basic Share (Annual)" data-type="int">Dividend per Basic Share (Annual)</option>
+                            <option value="EBIT Margin % (Annual)" data-type="%">EBIT Margin % (Annual)</option>
+                            <option value="EBITDA Margin % (Annual)" data-type="%">EBITDA Margin % (Annual)</option>
+                            <option value="EBT Margin % (Annual)" data-type="%">EBT Margin % (Annual)</option>
+                            <option value="Equity Multiplier (Annual)" data-type="int">Equity Multiplier (Annual)</option>
+                            <option value="FCF Dividend Payout Ratio % (Annual)" data-type="%">FCF Dividend Payout Ratio % (Annual)</option>
+                            <option value="Gross Margin % (Annual)" data-type="%">Gross Margin % (Annual)</option>
+                            <option value="Net Profit Margin % (Annual)" data-type="%">Net Profit Margin % (Annual)</option>
+                            <option value="ROA - Return on Assets (%) (Annual)" data-type="%">ROA - Return on Assets (%) (Annual)</option>
+                            <option value="ROCE - Return on Capital Employed (%) (Annual)" data-type="%">ROCE - Return on Capital Employed (%) (Annual)</option>
+                            <option value="ROE - Return on Equity (%) (Annual)" data-type="%">ROE - Return on Equity (%) (Annual)</option>
+                        </optgroup>
+
+                        <optgroup label="📈 Growth Metrics">
+                            <option value="Capex Growth (1y) % (Annual)" data-type="%">Capex Growth (1y) % (Annual)</option>
+                            <option value="Cash and Equivalents Growth (1y) % (Annual)" data-type="%">Cash and Equivalents Growth (1y) % (Annual)</option>
+                            <option value="Dividend Growth (1y) % (Annual)" data-type="%">Dividend Growth (1y) % (Annual)</option>
+                            <option value="EBIAT Growth (1y) % (Annual)" data-type="%">EBIAT Growth (1y) % (Annual)</option>
+                            <option value="EBIT Growth (1y) % (Annual)" data-type="%">EBIT Growth (1y) % (Annual)</option>
+                            <option value="EBITDA Growth (1y) % (Annual)" data-type="%">EBITDA Growth (1y) % (Annual)</option>
+                            <option value="EBT Growth (1y) % (Annual)" data-type="%">EBT Growth (1y) % (Annual)</option>
+                            <option value="EPS Growth (1y) % (Annual)" data-type="%">EPS Growth (1y) % (Annual)</option>
+                            <option value="FCF Growth (1y) % (Annual)" data-type="%">FCF Growth (1y) % (Annual)</option>
+                            <option value="Gross Profit Growth (1y) % (Annual)" data-type="%">Gross Profit Growth (1y) % (Annual)</option>
+                            <option value="Inventory Growth (1y) % (Annual)" data-type="%">Inventory Growth (1y) % (Annual)</option>
+                            <option value="NOPAT Growth (1y) % (Annual)" data-type="%">NOPAT Growth (1y) % (Annual)</option>
+                            <option value="Net Income Growth (1y) % (Annual)" data-type="%">Net Income Growth (1y) % (Annual)</option>
+                            <option value="OPEX Growth (1y) % (Annual)" data-type="%">OPEX Growth (1y) % (Annual)</option>
+                            <option value="Operating Income Growth (1y) % (Annual)" data-type="%">Operating Income Growth (1y) % (Annual)</option>
+                            <option value="Revenue Growth (1y) % (Annual)" data-type="%">Revenue Growth (1y) % (Annual)</option>
+                        </optgroup>
+
+                        <optgroup label="🏢 Balance Sheet">
+                            <option value="Accounts Payables (Annual)" data-type="int">Accounts Payables (Annual)</option>
+                            <option value="Accumulated Other Comprehensive Income (Annual)" data-type="int">Accumulated Other Comprehensive Income (Annual)</option>
+                            <option value="Cash and Equivalents (Annual)" data-type="int">Cash and Equivalents (Annual)</option>
+                            <option value="Deferred Revenue (Annual)" data-type="int">Deferred Revenue (Annual)</option>
+                            <option value="Intangible Assets (Annual)" data-type="int">Intangible Assets (Annual)</option>
+                            <option value="Long Term Debt (Annual)" data-type="int">Long Term Debt (Annual)</option>
+                            <option value="Long-Term Investments (Annual)" data-type="int">Long-Term Investments (Annual)</option>
+                            <option value="Non-Current Liabilities (Annual)" data-type="int">Non-Current Liabilities (Annual)</option>
+                            <option value="Other Current Assets (Annual)" data-type="int">Other Current Assets (Annual)</option>
+                            <option value="Other Current Liabilities (Annual)" data-type="int">Other Current Liabilities (Annual)</option>
+                            <option value="Other Non Current Liabilities (Annual)" data-type="int">Other Non Current Liabilities (Annual)</option>
+                            <option value="Other Non-Current Assets (Annual)" data-type="int">Other Non-Current Assets (Annual)</option>
+                            <option value="Property Plant & Equipment, net (Annual)" data-type="int">Property Plant & Equipment, net (Annual)</option>
+                        </optgroup>
+
+                        <optgroup label="📋 Income Statement">
+                            <option value="Cost of Revenues (Annual)" data-type="int">Cost of Revenues (Annual)</option>
+                            <option value="EBT (Annual)" data-type="int">EBT (Annual)</option>
+                            <option value="Expenses towards minority interests (Annual)" data-type="int">Expenses towards minority interests (Annual)</option>
+                            <option value="Gross Profit (Annual)" data-type="int">Gross Profit (Annual)</option>
+                            <option value="Income Tax (Annual)" data-type="int">Income Tax (Annual)</option>
+                            <option value="Interest Expense & Investment Income (Annual)" data-type="int">Interest Expense & Investment Income (Annual)</option>
+                            <option value="Net income from minority interests (Annual)" data-type="%">Net income from minority interests (Annual)</option>
+                            <option value="Operating Income (Annual)" data-type="int">Operating Income (Annual)</option>
+                            <option value="Other Operating Expenses (Annual)" data-type="int">Other Operating Expenses (Annual)</option>
+                            <option value="R&D Expenses (Annual)" data-type="int">R&D Expenses (Annual)</option>
+                        </optgroup>
+
+                        <optgroup label="💸 Cash Flow Statement Highlights">
+                            <option value="Business Acquisitions and Disposals (Annual)" data-type="int">Business Acquisitions and Disposals (Annual)</option>
+                            <option value="Capital Expenditure (-1) (Annual)" data-type="int">Capital Expenditure (-1) (Annual)</option>
+                            <option value="Depreciation Amortization & Accretion (Annual)" data-type="int">Depreciation Amortization & Accretion (Annual)</option>
+                            <option value="Dividends & Other Cash Distributions (Annual)" data-type="int">Dividends & Other Cash Distributions (Annual)</option>
+                            <option value="Free Cash Flow [FCF] (Annual)" data-type="int">Free Cash Flow [FCF] (Annual)</option>
+                            <option value="Investment Acquisitions and Disposals (Annual)" data-type="int">Investment Acquisitions and Disposals (Annual)</option>
+                            <option value="Issuance (Purchase) of Equity Shares (Annual)" data-type="int">Issuance (Purchase) of Equity Shares (Annual)</option>
+                            <option value="Issuance (Repayment) of Debt Securities (Annual)" data-type="int">Issuance (Repayment) of Debt Securities (Annual)</option>
+                            <option value="Net Cash Flow (Annual)" data-type="int">Net Cash Flow (Annual)</option>
+                            <option value="Net Cash Flow from Financing (Annual)" data-type="int">Net Cash Flow from Financing (Annual)</option>
+                            <option value="Net Cash Flow from Investing (Annual)" data-type="int">Net Cash Flow from Investing (Annual)</option>
+                            <option value="Net Cash Flow from Operations (Annual)" data-type="int">Net Cash Flow from Operations (Annual)</option>
+                        </optgroup>
+
+                        <optgroup label="🔧 Others">
+                            <option value="Company Name" data-type="string">Company Name</option>
+                            <option value="Industry" data-type="string">Industry</option>
+                            <option value="Market Capitalization" data-type="int">Market Capitalization</option>
+                            <option value="Enterprise Value (EV)" data-type="int">Enterprise Value (EV)</option>
+                            <option value="Current Ratio (Annual)" data-type="int">Current Ratio (Annual)</option>
+                            <option value="Cash Ratio (Annual)" data-type="int">Cash Ratio (Annual)</option>
+                            <option value="Interest Cover Ratio (Annual)" data-type="int">Interest Cover Ratio (Annual)</option>
+                            <option value="Date of Screening" data-type="date">Date of Screening</option>
+                            <option value="Delisted" data-type="string">Delisted</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div class="filter-field">
+                    <label>Operator:</label>
+                    <select class="operator-select">
+                        <option value="">Select operator...</option>
+                        <option value="equals">Equals</option>
+                        <option value="greater_than">Greater than</option>
+                        <option value="less_than">Less than</option>
+                        <option value="greater_equal">Greater than or equal</option>
+                        <option value="less_equal">Less than or equal</option>
+                        <option value="contains">Contains</option>
+                    </select>
+                </div>
+                
+                <div class="filter-field">
+                    <label>Value:</label>
+                    <input type="text" class="filter-value" placeholder="Enter value...">
+                </div>
+                
+                <div class="filter-actions">
+                    <button type="button" class="remove-filter-btn btn btn-danger">×</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- External Libraries -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    
+    <!-- Demo JavaScript -->
+    <script>
+        // Mock AJAX object for demo
+        var screener_ajax = {
+            ajax_url: '#',
+            nonce: 'demo_nonce'
+        };
+        
+        jQuery(document).ready(function($) {
+            var filterCount = 0;
+            var dataTable;
+            
+            // Initialize DataTable
+            dataTable = $('#screener-results-table').DataTable({
+                processing: true,
+                serverSide: false,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100], [10, 25, 50, 100]],
+                scrollX: true,
+                order: [[0, 'asc']],
+                columnDefs: [
+                    {
+                        targets: -1,
+                        orderable: false,
+                        searchable: false
+                    }
+                ]
+            });
+            
+            // Add first filter on load
+            addFilter();
+            
+            // Event handlers
+            $('#add-filter-btn').on('click', function() {
+                addFilter();
+            });
+            
+            $(document).on('click', '.remove-filter-btn', function() {
+                $(this).closest('.filter-row').fadeOut(300, function() {
+                    $(this).remove();
+                    updateFilterCount();
+                });
+            });
+            
+            $('#apply-filters-btn').on('click', function() {
+                showMessage('Demo mode: Filters would be applied to real data in WordPress environment', 'info');
+            });
+            
+            $('#clear-filters-btn').on('click', function() {
+                $('#filters-container').empty();
+                addFilter();
+                showMessage('Filters cleared', 'success');
+            });
+            
+            $('#export-btn').on('click', function() {
+                showMessage('Demo mode: CSV export would work with real data', 'info');
+            });
+            
+            $(document).on('change', '.metric-select', function() {
+                var dataType = $(this).find('option:selected').data('type');
+                var operatorSelect = $(this).closest('.filter-row').find('.operator-select');
+                updateOperators(operatorSelect, dataType);
+            });
+            
+            function addFilter() {
+                filterCount++;
+                var filterHtml = $('#filter-template').html();
+                var $newFilter = $(filterHtml);
+                $newFilter.attr('data-filter-id', filterCount);
+                
+                $newFilter.hide();
+                $('#filters-container').append($newFilter);
+                $newFilter.fadeIn(300);
+                
+                $newFilter.find('.metric-select').select2({
+                    placeholder: 'Select a metric...',
+                    allowClear: true,
+                    width: '100%'
+                });
+                
+                updateFilterCount();
+            }
+            
+            function updateFilterCount() {
+                var count = $('#filters-container .filter-row').length;
+                if (count === 0) {
+                    addFilter();
+                }
+            }
+            
+            function updateOperators(operatorSelect, dataType) {
+                var operators = {
+                    'string': [
+                        {value: 'equals', text: 'Equals'},
+                        {value: 'contains', text: 'Contains'}
+                    ],
+                    'int': [
+                        {value: 'equals', text: 'Equals'},
+                        {value: 'greater_than', text: 'Greater than'},
+                        {value: 'less_than', text: 'Less than'},
+                        {value: 'greater_equal', text: 'Greater than or equal'},
+                        {value: 'less_equal', text: 'Less than or equal'}
+                    ],
+                    '%': [
+                        {value: 'equals', text: 'Equals'},
+                        {value: 'greater_than', text: 'Greater than'},
+                        {value: 'less_than', text: 'Less than'},
+                        {value: 'greater_equal', text: 'Greater than or equal'},
+                        {value: 'less_equal', text: 'Less than or equal'}
+                    ]
+                };
+                
+                var availableOperators = operators[dataType] || operators['string'];
+                
+                operatorSelect.empty();
+                operatorSelect.append('<option value="">Select operator...</option>');
+                
+                $.each(availableOperators, function(index, operator) {
+                    operatorSelect.append('<option value="' + operator.value + '">' + operator.text + '</option>');
+                });
+            }
+            
+            function showMessage(message, type) {
+                var alertClass = 'alert-info';
+                switch(type) {
+                    case 'success':
+                        alertClass = 'alert-success';
+                        break;
+                    case 'error':
+                        alertClass = 'alert-danger';
+                        break;
+                    case 'warning':
+                        alertClass = 'alert-warning';
+                        break;
+                }
+                
+                var $alert = $('<div class="alert ' + alertClass + ' alert-dismissible" style="position: fixed; top: 20px; right: 20px; z-index: 9999; max-width: 400px;">' +
+                    '<button type="button" class="close" data-dismiss="alert">&times;</button>' +
+                    message +
+                    '</div>');
+                
+                $('body').append($alert);
+                
+                setTimeout(function() {
+                    $alert.fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                }, 5000);
+                
+                $alert.find('.close').on('click', function() {
+                    $alert.fadeOut(300, function() {
+                        $(this).remove();
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
